@@ -1,0 +1,85 @@
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage<OrderPageViewData>" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ Import Namespace="Dtm.Framework.ClientSites" %>
+<html xmlns="http://www.w3.org/1999/xhtml" class="dtm dtm--<%= (DtmContext.Page.PageType == "SubPage" || DtmContext.PageCode != "Index" ? "sub" : "front") %> dtm--<%= DtmContext.PageCode.ToLower() %> dtm--<%= (DtmContext.Page.IsStartPageType ? "@f" : "@b") %> dtm--<%= DtmContext.Page.PageType.ToLower() %> <%= Model.IsMobile ? "@mv" : "@dv" %>">
+
+<head>
+	<title><%= Model.PageTitle %></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, <% if (Model.IsMobile) { %>initial-scale=1.0,<% } %> maximum-scale=1.0">
+	<meta name="description" content="<%=Model.PageMetaDescription %>" />
+	<meta name="keywords" content="<%=Model.PageMetaKeywords %>" />
+
+	<% var androidThemeBarColor = SettingsManager.ContextSettings["AndroidThemeBarColor", "#ffffff"]; %>
+
+	<meta name="theme-color" content="<%= androidThemeBarColor %>">
+
+	<% if (DtmContext.IsProxyIpAddress || DtmContext.CampaignDomains.Any(d => d.DomainId == DtmContext.DomainId && d.Domain.ToLower().Contains("dtmstage")))  { %>
+	<meta name="robots" content="noindex, nofollow" />
+	<% } else { %>
+	<meta property="og:title" content="<%= Model.PageTitle %>" />
+	<meta property="og:description" content="<%=Model.PageMetaDescription %>" />
+	<meta property="og:url" content="https://<%= Request.Url.Host %>" />
+	<meta property="og:image" content="https://<%= Request.Url.Host %>/shop/200x200.jpg?appV=<%= DtmContext.ApplicationVersion %>" />
+	<meta name="google-site-verification" content="<%=Model.PageMetaVerify %>" />
+	<meta name="msvalidate.01" content="2917D7D7D8F86474F86BEC25A9F8D71E" />
+	<link rel="canonical" href="https://<%= Request.Url.Host %>" />
+	<% } %>
+
+	<link rel="shortcut icon" href="/favicon.ico?appV=<%= DtmContext.ApplicationVersion %>" />
+
+	<% Html.RenderPartial("Assets-Top", Model); %>
+	<% if (Model.IsMobile) { %>
+	<link type="text/css" rel="stylesheet" href="/shared/mobile/css/mobile-2.0.css?appV=<%= DtmContext.ApplicationVersion %>" />
+	<link type="text/css" rel="stylesheet" href="/css/mobile_ui.css?appV=<%= DtmContext.ApplicationVersion %>" />
+	<% } else { %>
+	<link type="text/css" rel="stylesheet" href="/css/site.css?appV=<%= DtmContext.ApplicationVersion %>" />
+	<link type="text/css" rel="stylesheet" href="/css/<%= DtmContext.Version %>/site.css?appV=<%= DtmContext.ApplicationVersion %>" />
+	<% } %>
+
+	<!-- ************** AUTHOR NO. BELOW ************** -->
+	<meta name="author" content="#10" />
+	<!-- ************** AUTHOR NO. ABOVE ************** -->
+
+	<asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+
+</head>
+<body class="dtm__in <%= Model.IsMobile ? "dtm__in--mv" : "dtm__in--dv" %>">
+<!-- HEADER -->
+<%  if (Model.IsMobile) { %>
+<div id="mainContainer">
+<div id="header">
+	<a href="?dm=d"><% Html.RenderSnippet("MOBILE-HEADER"); %></a>
+</div><!-- END id="header" -->
+<div id="contentContainer">
+<% } else { %>
+<%-- ******************** START DESKTOP HEADER CODE ******************** --%>
+<% Html.RenderSnippet("HEADER-MAIN"); %>
+	  <%-- ******************** **END DESKTOP HEADER CODE ******************** --%>
+	  <!-- // HEADER --><%} %>
+	  <%-- ************************** CONTENT FROM COMPONENTS *********************************** --%>
+<asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+	<%-- ************************** // CONTENT FROM COMPONTENTS ******************************* --%>
+	
+	<%-- ************************** CONTENT FROM ORDERFORM ************************************ --%>
+<% var renderOrderForm = SettingsManager.ContextSettings["Order.EnableOrderform", true]; if (renderOrderForm) Html.RenderPartial("OrderForm", Model); %>
+	<%-- ************************** // CONTENT FROM ORDERFORM ********************************* --%>
+	<%  if (Model.IsMobile) { %>
+	</div><!-- END id="contentContainer" -->
+	<% Html.RenderSnippet("OFFERDETAILS"); %>
+	<%Html.RenderPartial("Footer", Model); %>
+	</div><!-- END id="mainContainer" -->
+	<% } else { %>
+	<%-- ******************** START DESKTOP CODE ******************** --%>
+<%Html.RenderPartial("Footer", Model); %>
+<%-- ******************** **END DESKTOP CODE ******************** --%>
+<% } %>
+<%-- ************************************** **END WEB PAGE CONTENT ************************************** --%>
+<%= Model.FrameworkVersion %>
+<% Html.RenderPartial("Assets-Bottom", Model); %>
+<%Html.RenderSnippet("ORDERFORMSCRIPT");%>
+<% Html.RenderSiteControls(SiteControlLocation.ContentTop); %>
+<% Html.RenderSiteControls(SiteControlLocation.ContentBottom); %>
+<% Html.RenderSiteControls(SiteControlLocation.PageBottom); %>
+</body>
+</html>

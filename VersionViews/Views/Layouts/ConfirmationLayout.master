@@ -1,0 +1,41 @@
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage<ClientSiteViewData>" %><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+	<%
+		var language = Dtm.Framework.ClientSites.SettingsManager.ContextSettings["Language.LanguageType", "English"];
+		var page = "Confirmation_Layout_Head";
+		var file = page + "_" + language;
+	%>
+	
+	<%if(ViewEngines.Engines.FindPartialView(ViewContext.Controller.ControllerContext, file).View != null){%>
+	<%=Html.Partial(file, Model)%>
+	<%}else{%>
+	<!-- MISSING FILE: <%=file%> -->
+	<%}%>
+	<asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+		<%=Html.Partial("Fonts")%>
+</head>
+<body>
+	<%
+		page = "Confirmation_Layout_Body_Top";
+		file = page + "_" + language;
+	%>
+	<%if(ViewEngines.Engines.FindPartialView(ViewContext.Controller.ControllerContext, file).View != null){%>
+	<%=Html.Partial(file, Model)%>
+	<%}else{%>
+	<!-- MISSING FILE: <%=file%> -->
+	<%}%>
+	
+	<asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+	
+	<%
+		page = "Confirmation_Layout_Body_Bottom";
+		file = page + "_" + language;
+	%>
+	<%if(ViewEngines.Engines.FindPartialView(ViewContext.Controller.ControllerContext, file).View != null){%>
+	<%=Html.Partial(file, Model)%>
+	<%}else{%>
+	<!-- MISSING FILE: <%=file%> -->
+	<%}%>
+</body>
+</html>
